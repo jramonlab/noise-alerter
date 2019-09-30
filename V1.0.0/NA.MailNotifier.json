@@ -1,0 +1,163 @@
+[
+    {
+        "id": "66543ee8.e99ae",
+        "type": "tab",
+        "label": "NA.MailNotifier",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "862539b0.c217a8",
+        "type": "mqtt in",
+        "z": "66543ee8.e99ae",
+        "name": "",
+        "topic": "site1/area1/device1/alarm/params",
+        "qos": "1",
+        "datatype": "json",
+        "broker": "f1447c22.5352b",
+        "x": 180,
+        "y": 280,
+        "wires": [
+            [
+                "7f402128.142dc",
+                "67d77226.2f57ec"
+            ]
+        ]
+    },
+    {
+        "id": "67d77226.2f57ec",
+        "type": "debug",
+        "z": "66543ee8.e99ae",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 450,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "7f402128.142dc",
+        "type": "function",
+        "z": "66543ee8.e99ae",
+        "name": "Compose Alert Mail",
+        "func": "var mail_receiver = flow.get('mail_receiver') || 0;\n//MAIL_RECEIVER = \"jrhg82@hotmail.com,jrhg82@gmail.com\"\nMAIL_RECEIVER = \"jrhg82@hotmail.com\"\nflow.set('mail_receiver' , MAIL_RECEIVER)\n\nFlag_alert = msg.payload.ALARM\n\nmsg_mail = \"\"\n\n// Check Flag\nif (Flag_alert === true)\n{\n    msg_mail = { \n        payload:\"Hello,\\n\" + \"I am sorry to communicate that a \" +\n                \"noise alarm has been detected at \" +  Date().toString() + \"\\n\"+\n                \"Rate (\" + msg.payload.rate + \" peaks/minute)\" +\n                \" overpassed the threshold (\" + msg.payload.threshold + \" peaks/minute).\",\n        topic :  \"JRLAB: Alert, Mike is making noise!\",\n        to : MAIL_RECEIVER\n    }\n}\n\nreturn [msg_mail,msg];  ",
+        "outputs": 2,
+        "noerr": 0,
+        "x": 470,
+        "y": 280,
+        "wires": [
+            [
+                "55004c06.787f94"
+            ],
+            [
+                "18a41345.c83abd"
+            ]
+        ]
+    },
+    {
+        "id": "55004c06.787f94",
+        "type": "e-mail",
+        "z": "66543ee8.e99ae",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "secure": true,
+        "tls": true,
+        "name": "",
+        "dname": "Send Mail From GMail (jrhg82)",
+        "x": 850,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "f0f32a.25b30cd8",
+        "type": "comment",
+        "z": "66543ee8.e99ae",
+        "name": "NA.AlarmNotifier : Collects alar notifications from MQTT server and sends mail accordingly.The event is registered in database",
+        "info": "Collects alar notifications from MQTT server and sends mail accordingly.The event is registered in database",
+        "x": 460,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "b0138758.e3c7e8",
+        "type": "influxdb out",
+        "z": "66543ee8.e99ae",
+        "influxdb": "e187f538.348bb8",
+        "name": "",
+        "measurement": "alarms",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 830,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "18a41345.c83abd",
+        "type": "function",
+        "z": "66543ee8.e99ae",
+        "name": "Set db Fields",
+        "func": "var mail_receiver = flow.get('mail_receiver') || 0;\nvar val = msg.payload\n\nmsg.payload = \"\"\n\n// Check Flag\nif (val.ALARM == true)\n{\n    msg.payload = {\n        \n        rate:       val.rate,\n        counter:    val.counter,\n        threshold:  val.threshold,\n        NotifiedTo: mail_receiver\n    }    \n    \n    return msg;    \n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 550,
+        "y": 380,
+        "wires": [
+            [
+                "b0138758.e3c7e8",
+                "5a14547b.926a2c"
+            ]
+        ]
+    },
+    {
+        "id": "5a14547b.926a2c",
+        "type": "debug",
+        "z": "66543ee8.e99ae",
+        "name": "db",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 740,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "f1447c22.5352b",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "test-client2",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "e187f538.348bb8",
+        "type": "influxdb",
+        "z": "",
+        "hostname": "127.0.0.1",
+        "port": "8086",
+        "protocol": "http",
+        "database": "db_noisealerter",
+        "name": "",
+        "usetls": false,
+        "tls": ""
+    }
+]
