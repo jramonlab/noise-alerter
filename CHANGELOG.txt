@@ -1,0 +1,49 @@
+--------------------------------------------------------------------------------
+V1.0.0
+------
+Date	: 26/09/2019
+Scope	: WP0
+---------------------
+
+* gpio_event_collector.py :
+
+	- GPIO INPUT from Sound Level Meter. Signal is filtered so as to publish one single "HIGH" value
+	- GPIO OUTPUT connected to external LEDs:
+		- LED 1 -> MQTT PUBLISHED
+		- LED 2 -> ALARM DETECTED 
+
+* NA.DataCollecor.json
+* NA.AlarmManager.json
+* NA.MailNotifier.json
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+V1.1.0
+------
+Date	: 26/10/2019
+Scope	: WP0.1
+---------------------
+
+* gpio_event_collector.py :
+
+	- No external LEDs are connected. The LED matrix of Sense-hat is used instead.
+  		- MQTT PUBLISHED -> BLUE when connection ok; YELLOW when connection down
+		- ALARM DETECTED -> RED strip while signal is high.
+
+* motion_event_collector.py :
+
+	- New module that collects accelration values and report via MQQT when a threshold is trespassed.
+	- No filtering is applied.
+	- No accelaration values are reported except for when alarm is triggered.
+
+* NA.DataCollecor.json
+* NA.AlarmManager.json
+* NA.MailNotifier.json
+
+	- It directly receives the vibration alarms from MQTT broker and sends a mail. The alarm is also stored in database.
+
+--------------------------------------------------------------------------------
+
+For future changes:
+ * NA.DataCollecor.json - The grafana chart does not acceppt HIGH and LOW levels in database. 
+				They must be replaced by 1 and 0. 
