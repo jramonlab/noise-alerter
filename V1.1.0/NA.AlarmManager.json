@@ -1,0 +1,198 @@
+[
+    {
+        "id": "fe2e882b.de96b8",
+        "type": "tab",
+        "label": "NA.AlarmManager",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "daa2b982.0bbb58",
+        "type": "influxdb in",
+        "z": "fe2e882b.de96b8",
+        "influxdb": "e187f538.348bb8",
+        "name": "Get Latest Values from DB",
+        "query": "select * from gpio where time > now() - 1m",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 460,
+        "y": 220,
+        "wires": [
+            [
+                "15474837.147d78",
+                "d345a239.6d235"
+            ]
+        ]
+    },
+    {
+        "id": "15474837.147d78",
+        "type": "function",
+        "z": "fe2e882b.de96b8",
+        "name": "Alarm Collector",
+        "func": "// Period of extracted values from database (in minutes)\nvar db_check_interval = flow.get('db_check_interval') || 0;\n\n// \nvar ALARM_TIME_SPAN = 60;  // in sec.\nvar HW_ALARM_PULSE = 12;\n//\n// max rate that could trigger alarm (5 alarms per minute)\nvar MAX_RATE = Math.round(ALARM_TIME_SPAN / HW_ALARM_PULSE,1) ; \n//\n// if continuos noise is at 80% then the alarm is triggered\nvar NOISE_LEVEL_PERCENTAGE = 10 \n\nvar ALARM_THRESHOLD = MAX_RATE * NOISE_LEVEL_PERCENTAGE/100\n\nhigh_counter = 0;\n\nfor (i = 0; i < msg.payload.length; i++)\n{\n    if (msg.payload[i].gpio_level == \"HIGH\")\n    {\n        high_counter++;\n    }\n}\n\nAlarmRate = Math.round(high_counter / db_check_interval, 1); // Alarms/sec.\n\nAlarmFlag = false;\nif(AlarmRate > ALARM_THRESHOLD)\n{\n    AlarmFlag = true;\n}\n\nmsg.payload = {counter: high_counter,\n               rate: AlarmRate,\n               threshold : ALARM_THRESHOLD,\n               ALARM : AlarmFlag};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 700,
+        "y": 220,
+        "wires": [
+            [
+                "2b3f25db.501a9a",
+                "bcc4cefc.134d8"
+            ]
+        ]
+    },
+    {
+        "id": "d345a239.6d235",
+        "type": "debug",
+        "z": "fe2e882b.de96b8",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 690,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "2b3f25db.501a9a",
+        "type": "debug",
+        "z": "fe2e882b.de96b8",
+        "name": "ALARM MANAGER",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 950,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "9272b2d4.7e1f5",
+        "type": "inject",
+        "z": "fe2e882b.de96b8",
+        "name": "DB_PERIODIC_CHECK",
+        "topic": "1",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 170,
+        "y": 220,
+        "wires": [
+            [
+                "daa2b982.0bbb58",
+                "205edb33.05c294"
+            ]
+        ]
+    },
+    {
+        "id": "205edb33.05c294",
+        "type": "function",
+        "z": "fe2e882b.de96b8",
+        "name": "Get Inteval",
+        "func": "var db_check_interval = flow.get('db_check_interval') || 0;\n\nval = msg.topic;\n\nval = parseInt(val, 10);\nflow.set('db_check_interval', val);\n\nmsg.payload = {db_check_interval : val};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 410,
+        "y": 360,
+        "wires": [
+            [
+                "a56b4c2e.e98e5"
+            ]
+        ]
+    },
+    {
+        "id": "a56b4c2e.e98e5",
+        "type": "debug",
+        "z": "fe2e882b.de96b8",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 690,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "e2cc9b0f.bd6478",
+        "type": "mqtt out",
+        "z": "fe2e882b.de96b8",
+        "name": "ALARM PUBLISHER",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "broker": "f1447c22.5352b",
+        "x": 1080,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "bcc4cefc.134d8",
+        "type": "function",
+        "z": "fe2e882b.de96b8",
+        "name": "PARAMS",
+        "func": "var val = msg.payload\nvar topic = \"site1/area1/device1/alarm/params\"\n\nmsg.payload = val;\nmsg.topic = topic\nmsg.qos = 1;\nmsg.retain = false;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 880,
+        "y": 220,
+        "wires": [
+            [
+                "e2cc9b0f.bd6478"
+            ]
+        ]
+    },
+    {
+        "id": "36d42b1f.c8dfd4",
+        "type": "comment",
+        "z": "fe2e882b.de96b8",
+        "name": "NA.AlarmManager: The database is periodically queried in search  of \"HIGH\" alarm values. Those values are published via MQTT",
+        "info": "The database is periodically queried in search \nof \"HIGH\" alarm values. Those values are published via MQTT",
+        "x": 470,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "e187f538.348bb8",
+        "type": "influxdb",
+        "z": "",
+        "hostname": "127.0.0.1",
+        "port": "8086",
+        "protocol": "http",
+        "database": "db_noisealerter",
+        "name": "",
+        "usetls": false,
+        "tls": ""
+    },
+    {
+        "id": "f1447c22.5352b",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "test-client2",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    }
+]
