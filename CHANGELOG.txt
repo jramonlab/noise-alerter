@@ -1,22 +1,8 @@
 --------------------------------------------------------------------------------
-V1.0.0
-------
-Date	: 26/09/2019
-Scope	: WP0
----------------------
+For future changes:
+ * NA.DataCollecor.json - The grafana chart does not acceppt HIGH and LOW levels in database. 
+				They must be replaced by 1 and 0. 
 
-* gpio_event_collector.py :
-
-	- GPIO INPUT from Sound Level Meter. Signal is filtered so as to publish one single "HIGH" value
-	- GPIO OUTPUT connected to external LEDs:
-		- LED 1 -> MQTT PUBLISHED
-		- LED 2 -> ALARM DETECTED 
-
-* NA.DataCollecor.json
-* NA.AlarmManager.json
-* NA.MailNotifier.json
-
---------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 V1.1.0
 ------
@@ -43,7 +29,22 @@ Scope	: WP0.1
 	- It directly receives the vibration alarms from MQTT broker and sends a mail. The alarm is also stored in database.
 
 --------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+V1.0.0
+------
+Date	: 26/09/2019
+Scope	: WP0
+---------------------
 
-For future changes:
- * NA.DataCollecor.json - The grafana chart does not acceppt HIGH and LOW levels in database. 
-				They must be replaced by 1 and 0. 
+* gpio_event_collector.py :
+
+	- GPIO INPUT from Sound Level Meter. Signal is filtered so as to publish one single "HIGH" value
+	- GPIO OUTPUT connected to external LEDs:
+		- LED 1 -> MQTT PUBLISHED
+		- LED 2 -> ALARM DETECTED 
+
+* NA.DataCollecor.json
+* NA.AlarmManager.json
+* NA.MailNotifier.json
+
+--------------------------------------------------------------------------------
