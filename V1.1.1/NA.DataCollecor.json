@@ -1,0 +1,149 @@
+[
+    {
+        "id": "2119ad72.596e92",
+        "type": "tab",
+        "label": "NA.DataCollecor",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "ec19599f.0fcb08",
+        "type": "mqtt in",
+        "z": "2119ad72.596e92",
+        "name": "",
+        "topic": "site1/area1/device1/sensor1/gpio-alarm",
+        "qos": "0",
+        "datatype": "auto",
+        "broker": "a22d7737.3c37b8",
+        "x": 170,
+        "y": 180,
+        "wires": [
+            [
+                "1061752c.65fe6b",
+                "5e2acf46.22a5a",
+                "a1807623.206728"
+            ]
+        ]
+    },
+    {
+        "id": "1061752c.65fe6b",
+        "type": "debug",
+        "z": "2119ad72.596e92",
+        "name": "GPIO SIGNAL",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 540,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "5e2acf46.22a5a",
+        "type": "rbe",
+        "z": "2119ad72.596e92",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "property": "payload",
+        "x": 500,
+        "y": 180,
+        "wires": [
+            [
+                "390a3f39.115b1"
+            ]
+        ]
+    },
+    {
+        "id": "390a3f39.115b1",
+        "type": "debug",
+        "z": "2119ad72.596e92",
+        "name": "GPIO SIGNAL CHANGE",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 690,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "a1807623.206728",
+        "type": "function",
+        "z": "2119ad72.596e92",
+        "name": "db_fields",
+        "func": "msg.payload = {\n    gpio_level: msg.payload,\n    strValue:\"GPIO_level\"\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 520,
+        "y": 320,
+        "wires": [
+            [
+                "fa4f6c28.3d437"
+            ]
+        ]
+    },
+    {
+        "id": "fa4f6c28.3d437",
+        "type": "influxdb out",
+        "z": "2119ad72.596e92",
+        "influxdb": "e187f538.348bb8",
+        "name": "",
+        "measurement": "gpio",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 750,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "3e5a8265.dbed4e",
+        "type": "comment",
+        "z": "2119ad72.596e92",
+        "name": "NA.DataCollector  : Collect data from MQTT server and loads them into a database",
+        "info": "",
+        "x": 310,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "a22d7737.3c37b8",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "NA.GPIO.ALARM",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "e187f538.348bb8",
+        "type": "influxdb",
+        "z": "",
+        "hostname": "127.0.0.1",
+        "port": "8086",
+        "protocol": "http",
+        "database": "db_noisealerter",
+        "name": "",
+        "usetls": false,
+        "tls": ""
+    }
+]

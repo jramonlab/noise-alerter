@@ -1,0 +1,301 @@
+[
+    {
+        "id": "d3245f5.208f2a",
+        "type": "exec",
+        "z": "8a267c6f.a9573",
+        "command": "ip address show wlan0",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 440,
+        "y": 160,
+        "wires": [
+            [
+                "97fa2bb0.321348",
+                "9584409f.1118c"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "4d2d48ff.6fe7c8",
+        "type": "inject",
+        "z": "8a267c6f.a9573",
+        "name": "25s_delay",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "25",
+        "x": 230,
+        "y": 160,
+        "wires": [
+            [
+                "d3245f5.208f2a"
+            ]
+        ]
+    },
+    {
+        "id": "97fa2bb0.321348",
+        "type": "debug",
+        "z": "8a267c6f.a9573",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 1210,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "9584409f.1118c",
+        "type": "function",
+        "z": "8a267c6f.a9573",
+        "name": "",
+        "func": "var str = msg.payload\nvar start_id = str.search(\" inet \") + 6\n//var end_id = str.search(\" brd \")\nvar end_id = start_id + 16\n\nif (start_id !== -1 && end_id !== -1)\n{\n    str = str.substring(start_id, end_id );      \n}\n\nmsg.payload = \"R180\\n\" + \"WiFi IP: \" + str;\nmsg.speed = 5\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 640,
+        "y": 220,
+        "wires": [
+            [
+                "650d60cf.81086",
+                "7d71731c.72e4ac",
+                "90819513.199838"
+            ]
+        ]
+    },
+    {
+        "id": "650d60cf.81086",
+        "type": "debug",
+        "z": "8a267c6f.a9573",
+        "name": "IP-SHOW-WIFI",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 1220,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "7d71731c.72e4ac",
+        "type": "rpi-sensehat out",
+        "z": "8a267c6f.a9573",
+        "name": "",
+        "x": 810,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "1f77d131.f2c74f",
+        "type": "exec",
+        "z": "8a267c6f.a9573",
+        "command": "ip address show eth0",
+        "addpay": false,
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 620,
+        "y": 420,
+        "wires": [
+            [
+                "b0b9a41b.6849f8",
+                "8a5b8b31.b6bcd8"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "b0b9a41b.6849f8",
+        "type": "debug",
+        "z": "8a267c6f.a9573",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 1210,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "8a5b8b31.b6bcd8",
+        "type": "function",
+        "z": "8a267c6f.a9573",
+        "name": "",
+        "func": "var str = msg.payload\nvar start_id = str.search(\" inet \") + 6\n//var end_id = str.search(\" brd \")\nvar end_id = start_id + 16\n\nif (start_id !== -1 && end_id !== -1)\n{\n    str = str.substring(start_id, end_id -1 );      \n}\n\nmsg.payload = \"R180\\n\" + \"Eth IP: \" + str;\nmsg.speed = 5\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 820,
+        "y": 500,
+        "wires": [
+            [
+                "7e1b108a.742ad",
+                "b571cc82.ace83"
+            ]
+        ]
+    },
+    {
+        "id": "7e1b108a.742ad",
+        "type": "debug",
+        "z": "8a267c6f.a9573",
+        "name": "IP-SHOW-ETH",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 1240,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "b571cc82.ace83",
+        "type": "rpi-sensehat out",
+        "z": "8a267c6f.a9573",
+        "name": "",
+        "x": 990,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "90819513.199838",
+        "type": "delay",
+        "z": "8a267c6f.a9573",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "15",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "x": 440,
+        "y": 420,
+        "wires": [
+            [
+                "1f77d131.f2c74f"
+            ]
+        ]
+    },
+    {
+        "id": "cd6c70b7.827b9",
+        "type": "comment",
+        "z": "8a267c6f.a9573",
+        "name": "IP-SHOW",
+        "info": "IT shows on the LED Matrix the IP assigned at startup",
+        "x": 220,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "30c11d42.eac612",
+        "type": "rpi-sensehat in",
+        "z": "8a267c6f.a9573",
+        "name": "",
+        "motion": false,
+        "env": false,
+        "stick": true,
+        "x": 160,
+        "y": 620,
+        "wires": [
+            [
+                "5322379f.af1408",
+                "d3245f5.208f2a"
+            ]
+        ]
+    },
+    {
+        "id": "5322379f.af1408",
+        "type": "debug",
+        "z": "8a267c6f.a9573",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 360,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "82031315.73bc8",
+        "type": "rpi-sensehat out",
+        "z": "8a267c6f.a9573",
+        "name": "",
+        "x": 1010,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "2da5720e.b2fa2e",
+        "type": "inject",
+        "z": "8a267c6f.a9573",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 740,
+        "y": 740,
+        "wires": [
+            [
+                "78ee9edb.26b14"
+            ]
+        ]
+    },
+    {
+        "id": "78ee9edb.26b14",
+        "type": "function",
+        "z": "8a267c6f.a9573",
+        "name": "",
+        "func": "msg.payload = \"R180\\n\" + \"Letter\";\nmsg.speed = 5\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 870,
+        "y": 740,
+        "wires": [
+            [
+                "82031315.73bc8",
+                "edb96d87.3ed9"
+            ]
+        ]
+    },
+    {
+        "id": "edb96d87.3ed9",
+        "type": "debug",
+        "z": "8a267c6f.a9573",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 1040,
+        "y": 700,
+        "wires": []
+    }
+]
