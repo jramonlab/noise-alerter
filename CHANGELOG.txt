@@ -4,6 +4,14 @@ For future changes:
 				They must be replaced by 1 and 0. 
 
 --------------------------------------------------------------------------------
+V1.1.1
+------
+Date	: 8/11/2019
+Scope	: WP0.1
+---------------------
+- LED matrix is rotated according to current sensed orientation.
+- LED matrix orientation for NDERED flows is fixed at 180º
+--------------------------------------------------------------------------------
 V1.1.0
 ------
 Date	: 26/10/2019
